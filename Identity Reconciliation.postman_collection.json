@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "e78d73bd-cd3e-429b-a5a1-d53332ea52fc",
+		"name": "Identity Reconciliation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28166640"
+	},
+	"item": [
+		{
+			"name": "identify",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"lorraine@hillvalley.edu\",\n\t\"phoneNumber\": null\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{severhost}}/api/v1/identify",
+					"host": [
+						"{{severhost}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"identify"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "identify with new email and phonenNumber",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"lorraine@hillvalley.edu\",\n\t\"phoneNumber\": 123456\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{severhost}}/api/v1/identify",
+							"host": [
+								"{{severhost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"identify"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 25 Feb 2025 06:21:24 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "116"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "917598523df6f2aa-BOM"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"8a-RpqCmRwSw8Jpqf9a5w3wK0CDioY\""
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "rndr-id",
+							"value": "62e1b90b-ba5b-4ca4"
+						},
+						{
+							"key": "x-powered-by",
+							"value": "Express"
+						},
+						{
+							"key": "x-render-origin-server",
+							"value": "Render"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"contact\": {\n        \"primaryContatctId\": 1,\n        \"emails\": [\n            \"lorraine@hillvalley.edu\"\n        ],\n        \"phoneNumbers\": [\n            \"123456\"\n        ],\n        \"secondaryContactIds\": []\n    },\n    \"success\": true\n}"
+				},
+				{
+					"name": "identify only with phoneNumber",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": null,\n\t\"phoneNumber\":123456\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{severhost}}/api/v1/identify",
+							"host": [
+								"{{severhost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"identify"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 25 Feb 2025 06:23:18 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "128"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "91759b1a3907f2aa-BOM"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"a2-aUZgUN9lJRFaNl84Db3N+AZ6cZ4\""
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "rndr-id",
+							"value": "bede2e48-c570-4436"
+						},
+						{
+							"key": "x-powered-by",
+							"value": "Express"
+						},
+						{
+							"key": "x-render-origin-server",
+							"value": "Render"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"contact\": {\n        \"primaryContatctId\": 1,\n        \"emails\": [\n            \"lorraine@hillvalley.edu\",\n            \"mcfly@hillvalley.edu\"\n        ],\n        \"phoneNumbers\": [\n            \"123456\"\n        ],\n        \"secondaryContactIds\": [\n            2\n        ]\n    },\n    \"success\": true\n}"
+				},
+				{
+					"name": "identify only with email",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"lorraine@hillvalley.edu\",\n\t\"phoneNumber\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{severhost}}/api/v1/identify",
+							"host": [
+								"{{severhost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"identify"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 25 Feb 2025 06:23:57 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "128"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "91759c0fba65f2aa-BOM"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"a2-aUZgUN9lJRFaNl84Db3N+AZ6cZ4\""
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "rndr-id",
+							"value": "29eb4548-f416-4185"
+						},
+						{
+							"key": "x-powered-by",
+							"value": "Express"
+						},
+						{
+							"key": "x-render-origin-server",
+							"value": "Render"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"contact\": {\n        \"primaryContatctId\": 1,\n        \"emails\": [\n            \"lorraine@hillvalley.edu\",\n            \"mcfly@hillvalley.edu\"\n        ],\n        \"phoneNumbers\": [\n            \"123456\"\n        ],\n        \"secondaryContactIds\": [\n            2\n        ]\n    },\n    \"success\": true\n}"
+				},
+				{
+					"name": "identify with invalid phoneNumber datatype",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"george@hillvalley.edu\",\n\t\"phoneNumber\": \"919191\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{severhost}}/api/v1/identify",
+							"host": [
+								"{{severhost}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"identify"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Tue, 25 Feb 2025 06:25:33 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Content-Length",
+							"value": "62"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "CF-Ray",
+							"value": "91759e68bc66f2aa-BOM"
+						},
+						{
+							"key": "CF-Cache-Status",
+							"value": "DYNAMIC"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "br"
+						},
+						{
+							"key": "ETag",
+							"value": "W/\"3e-1tOkFzNFnSUkiBHllmeJZy5RGlU\""
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "rndr-id",
+							"value": "47719e87-10ae-4300"
+						},
+						{
+							"key": "x-powered-by",
+							"value": "Express"
+						},
+						{
+							"key": "x-render-origin-server",
+							"value": "Render"
+						},
+						{
+							"key": "Server",
+							"value": "cloudflare"
+						},
+						{
+							"key": "alt-svc",
+							"value": "h3=\":443\"; ma=86400"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"message\": \"Invalid data type of phoneNumber\",\n    \"success\": false\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "localhost",
+			"value": "http://localhost:3000",
+			"type": "default"
+		},
+		{
+			"key": "severhost",
+			"value": "https://identity-reconciliation-9043.onrender.com",
+			"type": "string"
+		}
+	]
+}

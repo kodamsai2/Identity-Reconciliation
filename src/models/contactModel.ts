@@ -1,8 +1,9 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../configs/db.js');
-const { linkPrecedence } = require('../constants');
+import { DataTypes, Model } from 'sequelize';
+import { sequelize } from '../configs/db';
+import { linkPrecedence } from '../constants';
+import { ContactAttributes } from '../interfaces';
 
-const Contact = sequelize.define('Contact', {
+const Contact = sequelize.define<Model<ContactAttributes, Partial<ContactAttributes>>>('Contact', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -24,7 +25,7 @@ const Contact = sequelize.define('Contact', {
         type: DataTypes.STRING,
         defaultValue: 'primary',
         validate: {
-            isIn: [linkPrecedence]
+            isIn: [linkPrecedence] // linkPrecedence = ['primary', 'secondary']
         }
     },
     deletedAt: {
@@ -33,4 +34,4 @@ const Contact = sequelize.define('Contact', {
     }
 });
 
-module.exports = Contact;
+export default Contact;

@@ -1,9 +1,12 @@
-require('dotenv').config()
-const express = require('express')
-const { connectToDB } = require('./configs/db');
-const identifyRoutes = require('./routes/identifyRoutes');
+import dotenv from 'dotenv'
+import express, { Express, Request, Response, NextFunction } from 'express'
+import { connectToDB } from './configs/db';
+import identifyRoutes from './routes/identifyRoutes';
 
-const app = express()
+dotenv.config()
+
+
+const app: Express = express()
 
 // Middleware
 app.use(express.json())
@@ -13,7 +16,8 @@ const port = process.env.PORT || 3000
 // API Routes
 app.use('/api/v1/identify', identifyRoutes)
 
-app.use((err, req, res, next) => {
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Global Error:', err.message);
   res.status(500).json({ message: 'Global Error: Internal Server Error', success: false });
 });
@@ -32,3 +36,5 @@ connectToDB()
     console.error(error);
     process.exit(1); // Exit the process if DB connection fails
   });
+
+export default app;
