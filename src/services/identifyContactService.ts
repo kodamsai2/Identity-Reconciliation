@@ -14,8 +14,8 @@ const getContactDetailsByPK = async(primaryId: number): Promise<ContactAttribute
         return contactDetails.toJSON();
     } catch (error) {
         console.error('Error in getContactDetailsByPK:', error);
-        const errorMesssage = error instanceof Error ? error.message : "Unknown error: In getContactDetailsByPK";
-        throw new Error(errorMesssage);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In getContactDetailsByPK";
+        throw new Error(errorMessage);
     }
 };
 
@@ -34,8 +34,8 @@ const populatePrimaryContactDetails = async (primaryId: number, contact: Contact
         }
     } catch (error) {
         console.error('Error in populatePrimaryContactDetails:', error);
-        const errorMesssage = error instanceof Error ? error.message : "Unknown error: In populatePrimaryContactDetails";
-        throw new Error(errorMesssage)
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In populatePrimaryContactDetails";
+        throw new Error(errorMessage)
     }
 };
 
@@ -49,23 +49,23 @@ const populateAllSecondaryContactsDetails = async (primaryId: number, contact: C
             order: [['createdAt', 'ASC']]
         })).map((contact) => contact.toJSON());
         
-        for (let i = 0; i < allSecondaryContacts.length; i++) {
-            if (allSecondaryContacts[i].email && !contact.emails.includes(allSecondaryContacts[i].email as string)){
-                contact.emails.push(allSecondaryContacts[i].email as string);
+        for (const secondaryContact of allSecondaryContacts) {
+            if (secondaryContact.email && !contact.emails.includes(secondaryContact.email as string)){
+                contact.emails.push(secondaryContact.email as string);
             }
              
-            if (allSecondaryContacts[i].phoneNumber && !contact.phoneNumbers.includes(allSecondaryContacts[i].phoneNumber as string)) {
-                contact.phoneNumbers.push(allSecondaryContacts[i].phoneNumber as string);
+            if (secondaryContact.phoneNumber && !contact.phoneNumbers.includes(secondaryContact.phoneNumber as string)) {
+                contact.phoneNumbers.push(secondaryContact.phoneNumber as string);
             }
              
-            if (!contact.secondaryContactIds.includes(allSecondaryContacts[i].id)){
-                contact.secondaryContactIds.push(allSecondaryContacts[i].id);
+            if (!contact.secondaryContactIds.includes(secondaryContact.id)){
+                contact.secondaryContactIds.push(secondaryContact.id);
             } 
         }       
     } catch (error) {
         console.error('Error in populateAllSecondaryContactsDetails:', error);
-        const errorMesssage = error instanceof Error ? error.message : "Unknown error: In populateAllSecondaryContactsDetails";
-        throw new Error(errorMesssage)
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In populateAllSecondaryContactsDetails";
+        throw new Error(errorMessage)
     }
 };
 
@@ -88,17 +88,45 @@ const getOrCreatePrimaryIdOfField = async (field: string, value: string, email: 
         }
     } catch (error) {
         console.error('Error in getOrCreatePrimaryIdOfField:', error);
-        const errorMesssage = error instanceof Error ? error.message : "Unknown error: In getOrCreatePrimaryIdOfField";
-        throw new Error(errorMesssage)
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In getOrCreatePrimaryIdOfField";
+        throw new Error(errorMessage)
     }
 };
 
-// Function to identify contact
+//Update contacts to be secondary and linked to a primary contact
+const updateToSecondaryContact = async (primaryId: number, secondaryId: number): Promise<number | null> => {
+    try {
+        const updatedContact = await Contact.update({ linkedId: primaryId, linkPrecedence: 'secondary' }, {
+            where: {
+                [Op.or]: [{ id: secondaryId }, { linkedId: secondaryId }],
+            },
+            returning: true,
+        });
+
+        if (updatedContact && updatedContact[1] && updatedContact[1].length > 0) {
+            const updatedContactData = updatedContact[1][0];
+            return  updatedContactData.getDataValue("linkedId") ?? null;
+        }
+        return null;
+
+    } catch (error) {
+        console.error('Error in updateToSecondaryContact:', error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In updateToSecondaryContact";
+        throw new Error(errorMessage)
+    }
+};
+
+/**
+ * Main service function to identify contacts based on email and/or phone number
+ * This function manages the relationships between contacts and ensures proper
+ * primary/secondary relationships
+ */
 const identifyContactService = async (email: string, phoneNumber: string): Promise<ContactData> => {
 
     let primaryIdOfEmail: number | null = null;
     let primaryIdOfPhoneNumber: number | null = null;
 
+    // Contact object to store contact details
     let contact: ContactData = {
         primaryContactId: null,
         emails: [],
@@ -107,6 +135,7 @@ const identifyContactService = async (email: string, phoneNumber: string): Promi
     };
 
     try {
+        // Step 1: Get or create primary IDs based on provided fields
         if (email) {
             primaryIdOfEmail = await getOrCreatePrimaryIdOfField('email', email, email, phoneNumber);
         }
@@ -115,61 +144,47 @@ const identifyContactService = async (email: string, phoneNumber: string): Promi
             primaryIdOfPhoneNumber = await getOrCreatePrimaryIdOfField('phoneNumber', phoneNumber, email, phoneNumber);
         }
         
-        // If both email and phoneNumber are present
+        // Step 2: Handle the different cases based on available IDs
         if (primaryIdOfEmail && primaryIdOfPhoneNumber) {
-            // If primaryIdOfEmail and primaryIdOfPhoneNumber are not same
+            // Case: Both email and phone number exist
             if (primaryIdOfEmail !== primaryIdOfPhoneNumber) {
-                // If primaryIdOfEmail is created first
+                // They belong to different contacts - need to merge
                 if (primaryIdOfEmail < primaryIdOfPhoneNumber) {
-                    // Update linkedId and linkPrecedence field of primary contact of phoneNumber and secondary contact of phoneNumber to primaryIdOfEmail
-                    const updatedContact = await Contact.update({ linkedId: primaryIdOfEmail, linkPrecedence: 'secondary' }, {
-                        where: {
-                            [Op.or]: [{ id: primaryIdOfPhoneNumber }, { linkedId: primaryIdOfPhoneNumber }],
-                        },
-                        returning: true,
-                    });
-
-                    if (updatedContact && updatedContact[1] && updatedContact[1].length > 0) {
-                        const updatedContactData = updatedContact[1][0];
-                        primaryIdOfPhoneNumber = updatedContactData.getDataValue("linkedId") ?? null;
-                    }
-
+                   // Email contact is older - make phone contact secondary
+                    primaryIdOfPhoneNumber = await updateToSecondaryContact(primaryIdOfEmail, primaryIdOfPhoneNumber);
+                    
+                    // Populate primary contact details to contact object
                     await populatePrimaryContactDetails(primaryIdOfEmail, contact)
                 } else {
-                    // If primaryIdOfPhoneNumber is created first
-                    // Update linkedId and linkPrecedence field of primary contact of email and secondary contact of email to primaryIdOfPhoneNumber
-                    const updatedContact = await Contact.update({ linkedId: primaryIdOfPhoneNumber, linkPrecedence: 'secondary' }, {
-                        where: {
-                            [Op.or]: [{ id: primaryIdOfEmail }, { linkedId: primaryIdOfEmail }],
-                        },
-                        returning: true,
-                    });
+                   // Phone contact is older - make email contact secondary
+                    primaryIdOfEmail = await updateToSecondaryContact(primaryIdOfPhoneNumber, primaryIdOfEmail);
 
-                    if (updatedContact && updatedContact[1] && updatedContact[1].length > 0) {
-                        const updatedContactData = updatedContact[1][0];
-                        primaryIdOfEmail = updatedContactData.getDataValue("linkedId") ?? null;
-                    }
-
+                    // Populate primary contact details to contact objects
                     await populatePrimaryContactDetails(primaryIdOfPhoneNumber, contact)
                 }
             } else {  
+                // Both belong to the same contact
                 await populatePrimaryContactDetails(primaryIdOfEmail, contact)
             }
         } else if (primaryIdOfEmail) {
+           // Case: Only email exists
             await populatePrimaryContactDetails(primaryIdOfEmail, contact)
         } else if (primaryIdOfPhoneNumber) {
+            // Case: Only phone number exists
             await populatePrimaryContactDetails(primaryIdOfPhoneNumber, contact)
         }
         
+         // Step 3: Populate all secondary contacts if we found a primary
         if (contact.primaryContactId){
+            // Populate all secondary contact details to contact objectxs
             await populateAllSecondaryContactsDetails(contact.primaryContactId, contact) 
         }
         
         return contact
     } catch (error) {
         console.error('Error in identifyContactService:',error);
-        const errorMesssage = error instanceof Error ? error.message : "Unknown error: In identifyContactService";
-        throw new Error(errorMesssage)
+        const errorMessage = error instanceof Error ? error.message : "Unknown error: In identifyContactService";
+        throw new Error(errorMessage)
     }
 };
 

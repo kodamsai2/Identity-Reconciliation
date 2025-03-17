@@ -1,6 +1,16 @@
 # Identity Reconciliation
 
-## Problem Statement: 
+
+### Problem Statement: [Link](https://loud-yumberry-23a.notion.site/Identity-Reconciliation-Backend-API-7ad4441040f84aa9b6437d8f77a6c714)
+ 
+### Solution Approach: [Link](./solution.md)
+
+## Technologies Used
+
+- **Backend:** Node.js, Express, TypeScript  
+- **Database:** Neon (Serverless PostgreSQL), Sequelize ORM  
+- **Testing:** Mocha, Chai
+- **Deployment:** Render
 
 ## Getting Started
 ### Prerequisites
@@ -21,9 +31,23 @@
     npm install
     ```
 
+### Environment Variables
+
+Create a `.env` file in the root directory and add the following variables:  
+
+```plaintext
+PORT = 3000
+NODE_ENV = 'production' # 'test', 'development', 'production'
+
+DATABASE_URL_DEV = your_database_url_here 
+DATABASE_URL_TEST = your_database_url_here 
+DATABASE_URL_PROD = your_database_url_here 
+```
+
 ### Running the API
 To start the API server at port: 3000, run:
 ```bash
+npm run build
 npm run start
 ```
 
@@ -51,7 +75,7 @@ This endpoint identifies and manages contact records based on the provided email
     "primaryContactId": 1,
     "emails": ["user@example.com"],
     "phoneNumbers": ["123456"],
-    "secondaryContactIds": [2, 3]
+    "secondaryContactIds": []
   },
   "success": true
 }
@@ -65,4 +89,4 @@ This endpoint identifies and manages contact records based on the provided email
 ### Links
 - Postman API document URL: https://documenter.getpostman.com/view/28166640/2sAYdeLXDy
 
-- ServerHost URL: https://identity-reconciliation-9043.onrender.com
+- ServerHost URL: https://identity-reconciliation-9043.onrender.com (Since I'm using the Render free tier, it takes some time to receive a response to the initial request.)
