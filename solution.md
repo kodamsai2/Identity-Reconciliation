@@ -81,6 +81,8 @@ The solution implements a contact identity reconciliation system that links and 
    - Specific error messages for easier debugging
    - Consistent error logging pattern across all functions
 
+![Contact](./contact.png)
+
 ## Response Format
 
 ```json
